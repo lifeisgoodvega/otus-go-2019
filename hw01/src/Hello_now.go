@@ -9,13 +9,11 @@ import (
 var cNtpHost string = "0.beevik-ntp.pool.ntp.org"
 
 // Now - function prints current time using ntp module
-func Now() bool {
+func Now() error {
 	time, err := ntp.Time(cNtpHost)
-	if err != nil {
-		fmt.Printf("Error occured: %s\n", err.Error())
-		return false
+	if err == nil {
+		fmt.Printf("%s\n", time.String())
 	}
 
-	fmt.Printf("%s\n", time.String())
-	return true
+	return err
 }

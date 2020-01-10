@@ -1,9 +1,12 @@
 package hellonow
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestNow(t *testing.T) {
-	if Now() == false {
-		t.Error("Execution of Now has failed")
-	}
+	err := Now()
+	assert.NoError(t, err)
 }
