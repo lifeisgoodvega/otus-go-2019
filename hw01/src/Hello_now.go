@@ -12,7 +12,7 @@ var cNtpHost string = "0.beevik-ntp.pool.ntp.org"
 func Now() bool {
 	time, err := ntp.Time(cNtpHost)
 	if err != nil {
-		fmt.Printf("Error occured")
+		fmt.Printf("Error occured: %s\n", err.Error())
 		return false
 	}
 
