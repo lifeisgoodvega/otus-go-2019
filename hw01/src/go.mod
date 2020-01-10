@@ -1,4 +1,4 @@
-module github.com/lifeisgoodvega/otus-go-2019
+module github.com/lifeisgoodvega/otus-go-2019/hw01/src
 
 go 1.13
 
