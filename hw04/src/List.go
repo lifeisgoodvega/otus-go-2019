@@ -4,29 +4,30 @@ import (
 	"errors"
 )
 
-// Item - node for double-linked list
+// Item is a node of double-linked list.
 type Item struct {
-	next, prev *Item
-	parent     *List
-	data       interface{}
+	next, prev  *Item
+	parent      *List
+	invalidated *bool
+	data        interface{}
 }
 
-// Value - get data from node
+// Value is a data from node.
 func (i *Item) Value() interface{} {
 	return i.data
 }
 
-// Next - next node
+// Next node.
 func (i *Item) Next() *Item {
 	return i.next
 }
 
-// Prev - previous node
+// Prev - previous node.
 func (i *Item) Prev() *Item {
 	return i.prev
 }
 
-// List - Double linked list for interface{} objects
+// List is a double linked list for interface{} objects.
 type List struct {
 	length      int
 	first, last *Item
@@ -37,47 +38,50 @@ func (l *List) Len() int {
 	return l.length
 }
 
-// First - get first item
+// First item of list.
 func (l *List) First() *Item {
 	return l.first
 }
 
-// Last - get last item
+// Last item of list
 func (l *List) Last() *Item {
 	return l.last
 }
 
-// PushFront - push item at begining
+// PushFront - push item at begining.
 func (l *List) PushFront(v interface{}) {
 	if l.first == nil {
-		l.first = &Item{data: v, parent: l}
+		// zerovalue for bool is false
+		l.first = &Item{data: v, parent: l, invalidated: new(bool)}
 		l.last = l.first
 	} else {
 		formerFirst := l.first
-		l.first = &Item{data: v, next: formerFirst, parent: l}
+		l.first = &Item{data: v, next: formerFirst, parent: l, invalidated: new(bool)}
 		formerFirst.prev = l.first
 	}
 	l.length++
 }
 
-// PushBack - push item at end
+// PushBack - push item at end.
 func (l *List) PushBack(v interface{}) {
 	if l.first == nil {
-		l.first = &Item{data: v, parent: l}
+		l.first = &Item{data: v, parent: l, invalidated: new(bool)}
 		l.last = l.first
 	} else {
 		formerLast := l.last
-		l.last = &Item{data: v, prev: formerLast, parent: l}
+		l.last = &Item{data: v, prev: formerLast, parent: l, invalidated: new(bool)}
 		formerLast.next = l.last
 	}
 	l.length++
 }
 
-// Remove - remove item from list
-// Caution - passing item which not belong to list will break algorithm
+// Remove item from list.
 func (l *List) Remove(i Item) error {
 	if i.parent != l {
 		return errors.New("Item must belong to list, which method is called")
+	}
+	if *i.invalidated {
+		return errors.New("Item was deleted, therefore invalidated")
 	}
 	if i.prev != nil && i.next != nil {
 		i.prev.next = i.next
@@ -94,6 +98,7 @@ func (l *List) Remove(i Item) error {
 		l.last = nil
 	}
 
+	*i.invalidated = true
 	l.length--
 	return nil
 }

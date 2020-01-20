@@ -71,6 +71,19 @@ func TestRemoveLastElement(t *testing.T) {
 	assert.Equal(t, list.Last().Value(), 2)
 }
 
+func TestInvalidate(t *testing.T) {
+	list := List{}
+	list.PushBack(1)
+	list.PushBack(2)
+	list.PushBack(3)
+
+	i := list.Last()
+	assert.Equal(t, i.Value(), 3)
+
+	assert.NoError(t, list.Remove(*i))
+	assert.Error(t, list.Remove(*i), "Item was deleted, therefore invalidated")
+}
+
 func TestPushFront(t *testing.T) {
 	list := List{}
 	list.PushBack(1)
