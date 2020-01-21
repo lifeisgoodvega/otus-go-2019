@@ -10,7 +10,7 @@ func worker(taskChannel <-chan func() error, completionChannel chan<- error, wg 
 	for {
 		task := <-taskChannel
 		if task == nil {
-			break
+			return
 		}
 		completionChannel <- task()
 	}
@@ -22,10 +22,10 @@ func Run(task []func() error, N int, M int) error {
 	completionChannel := make(chan error)
 	errorNum := 0
 	var wg sync.WaitGroup
+	wg.Add(N)
 
 	for i := 0; i < N; i++ {
 		go worker(taskChannel, completionChannel, &wg)
-		wg.Add(1)
 	}
 
 	pendingTasks := 0
@@ -55,14 +55,13 @@ func Run(task []func() error, N int, M int) error {
 		pendingTasks--
 	}
 
-	if errorNum >= M {
-		return errors.New("Limit of errors was exceeded")
-	}
-
 	close(taskChannel)
 	close(completionChannel)
 
 	wg.Wait()
 
+	if errorNum >= M {
+		return errors.New("Limit of errors was exceeded")
+	}
 	return nil
 }

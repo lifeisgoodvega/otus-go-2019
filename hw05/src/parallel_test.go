@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"math/rand"
+	"runtime"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -161,4 +162,9 @@ func TestRandomLoad(t *testing.T) {
 		fmt.Println("error case")
 		assert.Equal(t, "Limit of errors was exceeded", err.Error())
 	}
+
+	if runtime.NumGoroutine() > 2 {
+		fmt.Println("shit")
+	}
+	assert.Equal(t, 2, runtime.NumGoroutine())
 }
