@@ -1,9 +1,10 @@
-package copy
+package main
 
 import (
 	"fmt"
 	"github.com/akamensky/argparse"
 	"os"
+	"github.com/lifeisgoodvega/otus-go-2019/hw06/src/copy_lib"
 )
 
 func main() {
@@ -18,7 +19,7 @@ func main() {
 		fmt.Print(p.Usage(err))
 	}
 
-	err = Copy(*from, *to, *limit, *offset)
+	err = copy.Copy(*from, *to, *limit, *offset)
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
