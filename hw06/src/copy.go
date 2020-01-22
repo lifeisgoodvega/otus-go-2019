@@ -4,8 +4,9 @@ import (
 	"errors"
 	"io"
 	"os"
+	"time"
 
-	"github.com/cheggaaa/pb"
+	"github.com/cheggaaa/pb/v3"
 )
 
 const bufferSize uint32 = 1024 // 1kb
@@ -53,8 +54,10 @@ func Copy(from string, to string, limit int, offset int) error {
 
 	sectionReader := io.NewSectionReader(inFile, offset64, limit64)
 
-	bar := pb.StartNew(int(limit64))
-	bar.SetUnits(pb.U_BYTES)
+	bar := pb.New64(limit64)
+	bar.Set(pb.Bytes, true)
+	bar.SetRefreshRate(time.Millisecond * 100)
+	bar.Start()
 
 	buf := make([]byte, bufferSize)
 
@@ -72,6 +75,7 @@ func Copy(from string, to string, limit int, offset int) error {
 		}
 		bar.Add(bytesRead)
 	}
+	bar.Finish()
 
 	return nil
 }
